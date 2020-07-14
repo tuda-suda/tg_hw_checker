@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 
 logging.basicConfig(
-    format='{levelname} {asctime}: {message}', 
+    format='{levelname}: {message}', 
     datefmt='%Y-%m-%d %H:%M:%S',
     level=logging.INFO
 )
