@@ -9,9 +9,10 @@ from dotenv import load_dotenv
 
 
 logging.basicConfig(
-    format=f'{levelname}: {message}', 
+    format='{levelname}: {message}', 
     datefmt='%Y-%m-%d %H:%M:%S',
-    level=logging.INFO
+    level=logging.INFO,
+    style='{'
 )
 
 load_dotenv()
@@ -104,6 +105,8 @@ def main():
             new_homework = get_homework_statuses(current_timestamp)
             if new_homework.get('homeworks'):
                 send_message(bot, parse_homework_status(new_homework.get('homeworks')[0]))
+            else: 
+                logging.info('No homeworks found. Trying again in 5 mins...')
             current_timestamp = new_homework.get('current_date')
             time.sleep(300)
 
