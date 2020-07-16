@@ -50,7 +50,7 @@ def parse_homework_status(homework):
             raise ValueError
     except (KeyError, ValueError) as e:
         _log_and_raise_error(
-            'Invalid server response',
+            'Invalid server response.',
             exception=e
         )
 
@@ -60,7 +60,7 @@ def parse_homework_status(homework):
 def get_homework_statuses(current_timestamp):
     if current_timestamp is None:
         _log_and_raise_error(
-            'current_timestamp is None',
+            'current_timestamp is None.',
             exception=ValueError
         )
 
@@ -85,12 +85,12 @@ def get_homework_statuses(current_timestamp):
         )
     elif resp_status_code >= 400:
         _log_and_raise_error(
-            'Client error', 
+            'Client error.', 
             exception=requests.exceptions.RequestException, 
             status_code=resp_status_code
         )
 
-    logging.info('Request success')
+    logging.info('Request success.')
 
     return homework_statuses.json()
 
