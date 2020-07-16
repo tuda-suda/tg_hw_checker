@@ -9,8 +9,7 @@ from dotenv import load_dotenv
 
 
 logging.basicConfig(
-    format='{levelname}: {message}', 
-    datefmt='%Y-%m-%d %H:%M:%S',
+    format='[{levelname}]: {message}', 
     level=logging.INFO,
     style='{'
 )
@@ -24,9 +23,12 @@ CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 PRACTICUM_API_URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
 
 
-def _log_and_raise_error(error_msg, exception=Exception(), status_code=None):
+TG_BOT = telegram.Bot(token=TELEGRAM_TOKEN)
+
+
+def _log_and_raise_error(error_msg, exception=Exception, status_code=None):
     """
-    Log an error and raise exception. If status_code is provided, 
+    Log an error and raise exception. If HTTP status_code is provided, 
     also log a status code with a description.
     """
     if status_code:
@@ -34,19 +36,34 @@ def _log_and_raise_error(error_msg, exception=Exception(), status_code=None):
     else:
         logging.error(error_msg)
 
-    raise exception
+    raise exception(error_msg)
     
 
 def parse_homework_status(homework):
-    homework_name = homework['homework_name']
-    if homework['status'] == 'rejected':
-        verdict = 'К сожалению в работе нашлись ошибки.'
-    else:
-        verdict = 'Ревьюеру всё понравилось, можно приступать к следующему уроку.'
+    try:
+        homework_name = homework['homework_name']
+        if homework['status'] == 'rejected':
+            verdict = 'К сожалению в работе нашлись ошибки.'
+        elif homework['status'] == 'approved':
+            verdict = 'Ревьюеру всё понравилось, можно приступать к следующему уроку.'
+        else:
+            raise ValueError
+    except (KeyError, ValueError) as e:
+        _log_and_raise_error(
+            'Invalid server response',
+            exception=e
+        )
+
     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
 
 def get_homework_statuses(current_timestamp):
+    if current_timestamp is None:
+        _log_and_raise_error(
+            'current_timestamp is None',
+            exception=ValueError
+        )
+
     headers = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
     params = {'from_date': current_timestamp}
 
@@ -81,8 +98,9 @@ def get_homework_statuses(current_timestamp):
 def send_message(message):
     logging.info('Sending message to user...')
 
+    bot = TG_BOT
+
     try:
-        bot = telegram.Bot(token=TELEGRAM_TOKEN)
         sent_message = bot.send_message(text=message, chat_id=CHAT_ID)
     except telegram.TelegramError as e:
         _log_and_raise_error(
@@ -104,7 +122,7 @@ def main():
         try:
             new_homework = get_homework_statuses(current_timestamp)
             if new_homework.get('homeworks'):
-                send_message(bot, parse_homework_status(new_homework.get('homeworks')[0]))
+                send_message(parse_homework_status(new_homework.get('homeworks')[0]))
             else: 
                 logging.info('No homeworks found. Trying again in 5 mins...')
             current_timestamp = new_homework.get('current_date')
