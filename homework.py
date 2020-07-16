@@ -37,7 +37,7 @@ def _log_and_raise_error(error_msg, exception=Exception, status_code=None):
     if status_code:
         logging.error(
             f'{error_msg} Status code: '
-            '{status_code} {status_codes_desc[status_code]}'
+            f'{status_code} {status_codes_desc[status_code]}'
         )
     else:
         logging.error(error_msg)
