@@ -20,7 +20,10 @@ load_dotenv()
 PRACTICUM_TOKEN = os.getenv("PRACTICUM_TOKEN")
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
-PRACTICUM_API_URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
+PRACTICUM_API_URL = (
+    'https://praktikum.yandex.ru/'
+    'api/user_api/homework_statuses/'
+)
 
 
 TG_BOT = telegram.Bot(token=TELEGRAM_TOKEN)
@@ -32,7 +35,10 @@ def _log_and_raise_error(error_msg, exception=Exception, status_code=None):
     also log a status code with a description.
     """
     if status_code:
-        logging.error(f'{error_msg} Status code: {status_code} {status_codes_desc[status_code]}')
+        logging.error(
+            f'{error_msg} Status code: '
+            '{status_code} {status_codes_desc[status_code]}'
+        )
     else:
         logging.error(error_msg)
 
@@ -45,7 +51,10 @@ def parse_homework_status(homework):
         if homework['status'] == 'rejected':
             verdict = 'К сожалению в работе нашлись ошибки.'
         elif homework['status'] == 'approved':
-            verdict = 'Ревьюеру всё понравилось, можно приступать к следующему уроку.'
+            verdict = (
+                'Ревьюеру всё понравилось, '
+                'можно приступать к следующему уроку.'
+            )
         else:
             raise ValueError
     except (KeyError, ValueError) as e:
@@ -122,7 +131,9 @@ def main():
         try:
             new_homework = get_homework_statuses(current_timestamp)
             if new_homework.get('homeworks'):
-                send_message(parse_homework_status(new_homework.get('homeworks')[0]))
+                send_message(
+                    parse_homework_status(new_homework.get('homeworks')[0])
+                )
             else: 
                 logging.info('No homeworks found. Trying again in 5 mins...')
             current_timestamp = new_homework.get('current_date')
