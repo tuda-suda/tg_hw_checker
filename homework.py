@@ -137,7 +137,7 @@ def main():
             else: 
                 logging.info('No homeworks found. Trying again in 5 mins...')
             current_timestamp = new_homework.get('current_date')
-            time.sleep(300)
+            time.sleep(900)
 
         except Exception as e:
             logging.warn('Bot failure. Trying again in 5 seconds...')
