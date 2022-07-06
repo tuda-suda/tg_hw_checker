@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 
 logging.basicConfig(
-    format='[{levelname}]: {message}', 
+    format='[{levelname}]: {message}',
     level=logging.INFO,
     style='{'
 )
@@ -20,10 +20,7 @@ load_dotenv()
 PRACTICUM_TOKEN = os.getenv("PRACTICUM_TOKEN")
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
-PRACTICUM_API_URL = (
-    'https://praktikum.yandex.ru/'
-    'api/user_api/homework_statuses/'
-)
+PRACTICUM_API_URL = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 
 
 TG_BOT = telegram.Bot(token=TELEGRAM_TOKEN)
@@ -31,7 +28,7 @@ TG_BOT = telegram.Bot(token=TELEGRAM_TOKEN)
 
 def _log_and_raise_error(error_msg, exception=Exception, status_code=None):
     """
-    Log an error and raise exception. If HTTP status_code is provided, 
+    Log an error and raise exception. If HTTP status_code is provided,
     also log a status code with a description.
     """
     if status_code:
@@ -43,11 +40,11 @@ def _log_and_raise_error(error_msg, exception=Exception, status_code=None):
         logging.error(error_msg)
 
     raise exception(error_msg)
-    
+
 
 def parse_homework_status(homework):
     try:
-        homework_name = homework['homework_name']
+        lesson_name = homework['lesson_name']
         if homework['status'] == 'rejected':
             verdict = 'К сожалению в работе нашлись ошибки.'
         elif homework['status'] == 'approved':
@@ -63,7 +60,7 @@ def parse_homework_status(homework):
             exception=e
         )
 
-    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
+    return f'У вас проверили работу "{lesson_name}"!\n\n{verdict}'
 
 
 def get_homework_statuses(current_timestamp):
@@ -80,7 +77,7 @@ def get_homework_statuses(current_timestamp):
 
     homework_statuses = requests.get(
         url=PRACTICUM_API_URL,
-        params=params, 
+        params=params,
         headers=headers
     )
 
@@ -88,14 +85,14 @@ def get_homework_statuses(current_timestamp):
 
     if resp_status_code >= 500:
         _log_and_raise_error(
-            'API server error.', 
-            exception=requests.exceptions.RequestException, 
+            'API server error.',
+            exception=requests.exceptions.RequestException,
             status_code=resp_status_code
         )
     elif resp_status_code >= 400:
         _log_and_raise_error(
-            'Client error.', 
-            exception=requests.exceptions.RequestException, 
+            'Client error.',
+            exception=requests.exceptions.RequestException,
             status_code=resp_status_code
         )
 
@@ -134,8 +131,8 @@ def main():
                 send_message(
                     parse_homework_status(new_homework.get('homeworks')[0])
                 )
-            else: 
-                logging.info('No homeworks found. Trying again in 5 mins...')
+            else:
+                logging.info('No homeworks found. Trying again in 15 mins...')
             current_timestamp = new_homework.get('current_date')
             time.sleep(900)
 

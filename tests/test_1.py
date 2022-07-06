@@ -51,14 +51,14 @@ class TestHomework:
 
         monkeypatch.setattr(telegram, "Bot", mock_telegram_bot)
 
-        import homework
+        import main
 
-        assert hasattr(homework, 'send_message'), 'Функция `send_message()` не существует. Не удаляйте её.'
-        assert hasattr(homework.send_message, '__call__'), 'Функция `send_message()` не существует. Не удаляйте её.'
-        assert len(signature(homework.send_message).parameters) == 1, \
+        assert hasattr(main, 'send_message'), 'Функция `send_message()` не существует. Не удаляйте её.'
+        assert hasattr(main.send_message, '__call__'), 'Функция `send_message()` не существует. Не удаляйте её.'
+        assert len(signature(main.send_message).parameters) == 1, \
             'Функция `send_message()` должна быть с одним параметром.'
 
-        result = homework.send_message('Test_message_check')
+        result = main.send_message('Test_message_check')
         assert result == random_sid, \
             'Проверьте, что вы возвращаете в функции send_message() отправленное сообщение ботом bot.send_message()'
 
@@ -69,16 +69,16 @@ class TestHomework:
 
         monkeypatch.setattr(requests, 'get', mock_response_get)
 
-        import homework
+        import main
 
-        assert hasattr(homework, 'get_homework_statuses'), \
+        assert hasattr(main, 'get_homework_statuses'), \
             'Функция `get_homework_statuses()` не существует. Не удаляйте её.'
-        assert hasattr(homework.get_homework_statuses, '__call__'), \
+        assert hasattr(main.get_homework_statuses, '__call__'), \
             'Функция `get_homework_statuses()` не существует. Не удаляйте её.'
-        assert len(signature(homework.get_homework_statuses).parameters) == 1, \
+        assert len(signature(main.get_homework_statuses).parameters) == 1, \
             'Функция `get_homework_statuses()` должна быть с одним параметром.'
 
-        result = homework.get_homework_statuses(234435234)
+        result = main.get_homework_statuses(234435234)
         assert type(result) == dict, \
             'Проверьте, что из функции get_homework_statuses() возвращается словарь'
         assert 'homeworks' in result, \
@@ -98,16 +98,16 @@ class TestHomework:
             "lesson_name": "Итоговый проект"
         }
 
-        import homework
+        import main
 
-        assert hasattr(homework, 'parse_homework_status'), \
+        assert hasattr(main, 'parse_homework_status'), \
             'Функция `parse_homework_status()` не существует. Не удаляйте её.'
-        assert hasattr(homework.parse_homework_status, '__call__'), \
+        assert hasattr(main.parse_homework_status, '__call__'), \
             'Функция `parse_homework_status()` не существует. Не удаляйте её.'
-        assert len(signature(homework.parse_homework_status).parameters) == 1, \
+        assert len(signature(main.parse_homework_status).parameters) == 1, \
             'Функция `parse_homework_status()` должна быть с одним параметром.'
 
-        result = homework.parse_homework_status(test_data)
+        result = main.parse_homework_status(test_data)
         assert result.startswith(f'У вас проверили работу "{random_sid}"'), \
             'Проверьте, что возвращаете название домашней работы в возврате функции parse_homework_status()'
         assert result.endswith(f'Ревьюеру всё понравилось, можно приступать к следующему уроку.'), \
@@ -115,7 +115,7 @@ class TestHomework:
             'в возврате функции parse_homework_status()'
 
         test_data['status'] = 'rejected'
-        result = homework.parse_homework_status(test_data)
+        result = main.parse_homework_status(test_data)
         assert result.startswith(f'У вас проверили работу "{random_sid}"'), \
             'Проверьте, что возвращаете название домашней работы в возврате функции parse_homework_status()'
         assert result.endswith(f'К сожалению в работе нашлись ошибки.'), \
