@@ -21,7 +21,7 @@ PRACTICUM_TOKEN = os.getenv("PRACTICUM_TOKEN")
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 PRACTICUM_API_URL = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
-
+POLL_PERIOD = os.getenv('POLL_PERIOD') or 900
 
 TG_BOT = telegram.Bot(token=TELEGRAM_TOKEN)
 
@@ -104,10 +104,8 @@ def get_homework_statuses(current_timestamp):
 def send_message(message):
     logging.info('Sending message to user...')
 
-    bot = TG_BOT
-
     try:
-        sent_message = bot.send_message(text=message, chat_id=CHAT_ID)
+        sent_message = TG_BOT.send_message(text=message, chat_id=CHAT_ID)
     except telegram.TelegramError as e:
         _log_and_raise_error(
             f'Failed to send a message. Error message: "{e}"',
@@ -132,9 +130,9 @@ def main():
                     parse_homework_status(new_homework.get('homeworks')[0])
                 )
             else:
-                logging.info('No homeworks found. Trying again in 15 mins...')
+                logging.info(f'No homeworks found. Trying again in {POLL_PERIOD} seconds...')
             current_timestamp = new_homework.get('current_date')
-            time.sleep(900)
+            time.sleep(POLL_PERIOD)
 
         except Exception as e:
             logging.warn('Bot failure. Trying again in 5 seconds...')

@@ -29,6 +29,7 @@ sudo -H pip install -r requirements.txt
  - `PRACTICUM_TOKEN` - токен для API Практикума можно взять [здесь](https://oauth.yandex.ru/authorize?response_type=token&client_id=1d0b9dd4d652455a9eb710d450ff456a) (понадобится войти с пользователем, который учится в Практикуме)
  - `TELEGRAM_TOKEN` - токен для бота в телеграм можно спросить у [BotFather](https://t.me/botfather) (команда /newbot)
  - `TELEGRAM_CHAT_ID` - ID вашего юзера в телеграм можно взять у [userinfobot](https://t.me/userinfobot) (команда /start)
+ - (optional)`POLL_PERIOD` - Частота в секундах с которой бот обращается к API, по-умолчанию - 900
 
 Скопируйте файл в `.env`:
 ```
