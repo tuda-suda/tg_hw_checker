@@ -1,0 +1,11 @@
+[Unit]
+Description=Telegram bot that checks homework status
+
+[Service]
+User=<User to run the service as>
+ExecStart=python3 <path to repository>/main.py
+Restart=always
+StandardOutput=file:<path of the logfile>
+
+[Install]
+WantedBy=multi-user.target
