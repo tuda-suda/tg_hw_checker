@@ -21,7 +21,7 @@ PRACTICUM_TOKEN = os.getenv("PRACTICUM_TOKEN")
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 PRACTICUM_API_URL = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
-POLL_PERIOD = int(os.getenv('POLL_PERIOD')) or 900
+POLL_PERIOD = int(os.getenv('POLL_PERIOD')) if os.getenv('POLL_PERIOD') else 900
 
 TG_BOT = telegram.Bot(token=TELEGRAM_TOKEN)
 
