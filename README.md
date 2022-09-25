@@ -2,8 +2,30 @@
 Телеграм-бот который проверяет статус домашки в Яндекс.Практикум
 
 # Setup
+## 1. Настройка `.env`
 
-## 1. Prerequisites
+Откройте `.env.template`, и установите переменные:
+
+ - `PRACTICUM_TOKEN` - токен для API Практикума можно взять [здесь](https://oauth.yandex.ru/authorize?response_type=token&client_id=1d0b9dd4d652455a9eb710d450ff456a) (понадобится войти с пользователем, который учится в Практикуме)
+ - `TELEGRAM_TOKEN` - токен для бота в телеграм можно спросить у [BotFather](https://t.me/botfather) (команда /newbot)
+ - `TELEGRAM_CHAT_ID` - ID вашего юзера в телеграм можно взять у [userinfobot](https://t.me/userinfobot) (команда /start)
+ - (optional)`POLL_PERIOD` - Частота в секундах с которой бот обращается к API, по-умолчанию - 900
+
+Скопируйте файл в `.env`:
+```
+cp .env.template .env
+```
+
+## 2. Запуск
+
+### Docker:
+Для запуска в Docker:
+```
+docker pull mugtaram/tg_hw_checker:1.1
+docker run -d --name tg_hw_checker --env-file /path/to/.env mugtaram/tg_hw_checker:1.1
+```
+
+### Зависимости для ручного запуска
 Убедитесь, что на машине установлены:
 
  - `python >= 3.6` (проверить можно командой `python3 --version`)
@@ -21,22 +43,9 @@ git clone https://github.com/tuda-suda/tg_hw_checker.git
 cd tg_hw_checker
 sudo -H pip install -r requirements.txt
 ```
+### Systemd:
+Для запуска в systemd:
 
-## 2. `.env` & systemd
-### Настройка `.env`:
-Откройте `.env.template`, и установите переменные:
-
- - `PRACTICUM_TOKEN` - токен для API Практикума можно взять [здесь](https://oauth.yandex.ru/authorize?response_type=token&client_id=1d0b9dd4d652455a9eb710d450ff456a) (понадобится войти с пользователем, который учится в Практикуме)
- - `TELEGRAM_TOKEN` - токен для бота в телеграм можно спросить у [BotFather](https://t.me/botfather) (команда /newbot)
- - `TELEGRAM_CHAT_ID` - ID вашего юзера в телеграм можно взять у [userinfobot](https://t.me/userinfobot) (команда /start)
- - (optional)`POLL_PERIOD` - Частота в секундах с которой бот обращается к API, по-умолчанию - 900
-
-Скопируйте файл в `.env`:
-```
-cp .env.template .env
-```
-
-### Настройка unit-файла:
 Откройте `tg-hw-checker.service.template`, и настройте в нем:
 
  - `User` - юзер, под которым будет работать daemon
@@ -51,9 +60,7 @@ sudo cp tg-hw-checker.service.template /etc/systemd/system/tg-hw-checker.service
 ```
 sudo systemctl daemon-reload
 ```
-
-## 3. Start
-Запустить бота можно командой:
+Запустить daemon бота можно командой:
 ```
 sudo systemctl start tg-hw-checker
 ```
